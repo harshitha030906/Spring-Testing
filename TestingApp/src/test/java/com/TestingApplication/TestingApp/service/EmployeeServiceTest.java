@@ -2,6 +2,9 @@ package com.TestingApplication.TestingApp.service;
 
 import com.TestingApplication.TestingApp.TestContainerConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
@@ -15,12 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 //UnsatisfiedDependencyException: Error creating bean with name 'com.TestingApplication.TestingApp.service.EmployeeServiceTest'
 @Import(TestContainerConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
-    @Autowired
+    @InjectMocks
     private EmployeeService employeeService;
 
     @Test
     void testGetEmployeeById_WhenEmployeeIdIsPresent_ThenReturnEmployeeDto(){
-
+        employeeService.getEmployeeByID(1L);
     }
 }
