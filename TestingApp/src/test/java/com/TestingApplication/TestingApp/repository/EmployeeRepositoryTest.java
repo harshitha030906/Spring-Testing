@@ -1,5 +1,6 @@
 package com.TestingApplication.TestingApp.repository;
 
+import com.TestingApplication.TestingApp.TestContainerConfiguration;
 import com.TestingApplication.TestingApp.entity.EmployeeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,14 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.AutoConfigureDataJpa;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Import(TestContainerConfiguration.class)
 @DataJpaTest
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+//if the datajpatest annotation finds any embedded database that is in pom.xml then it automatically uses the data that is
+    //present in that database to test the testcases. So we do not need to use @SpringBootTest to avoid loading the whole Spring application.
+
+    //you should clean everything in the repository after one testcase before executing the further testcases..so datajpatest
+    //does that and cleans everything and makes the repository empty.
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) this is used to replace the actual
+    //database with the embedded databases such as h2 database because in the production u shouldnt use the actual database anytime
 class EmployeeRepositoryTest {
 
     @Autowired
