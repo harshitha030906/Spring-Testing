@@ -11,7 +11,6 @@ import lombok.*;
 @Builder
 public class EmployeeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long employeeID;
     private String firstName;
     private String lastName;

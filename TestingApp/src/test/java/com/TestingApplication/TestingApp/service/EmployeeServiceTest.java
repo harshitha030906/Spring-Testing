@@ -28,8 +28,8 @@ import static org.mockito.Mockito.when;
 //@DataJpaTest
 //you cannot use this annotation because it only creates a bean of repository
 //UnsatisfiedDependencyException: Error creating bean with name 'com.TestingApplication.TestingApp.service.EmployeeServiceTest'
-//@Import(TestContainerConfiguration.class)
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestContainerConfiguration.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
 
@@ -55,6 +55,7 @@ class EmployeeServiceTest {
                 .salary(200D)
                 .age(18)
                 .build();
+        when(employeeRepository.existsById(id)).thenReturn(true);
         when(employeeRepository.findById(id)).thenReturn(Optional.of(employee));
         //act
         EmployeeDTO employeeDTO = employeeService.getEmployeeByID(id);
