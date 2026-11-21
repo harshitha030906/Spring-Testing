@@ -7,6 +7,7 @@ import com.TestingApplication.TestingApp.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -85,6 +86,8 @@ class EmployeeServiceTest {
         //assign
         when(employeeRepository.save(any(EmployeeEntity.class))).thenReturn(mockEmployeeEntity);
 
+        ArgumentCaptor<EmployeeEntity> employeeEntityArgumentCaptor = ArgumentCaptor.forClass(EmployeeEntity.class);
+
         //act
         EmployeeDTO stubbedDTO = employeeService.postEmployee(mockEmployeeDTO);
 
@@ -92,6 +95,12 @@ class EmployeeServiceTest {
         assertThat(mockEmployeeDTO).isNotNull();
         assertThat(stubbedDTO.getEmployeeID()).isEqualTo(mockEmployeeEntity.getEmployeeID());
         assertThat(stubbedDTO.getEmail()).isEqualTo(mockEmployeeEntity.getEmail());
+
+        verify(employeeRepository).save(employeeEntityArgumentCaptor.capture());
+
+        EmployeeEntity capturedEmployee = employeeEntityArgumentCaptor.getValue();
+
+        assertThat(capturedEmployee.getFirstName()).isEqualTo(mockEmployeeEntity.getFirstName());
     }
 }
 
