@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -63,5 +64,7 @@ class EmployeeServiceTest {
         assertThat(employeeDTO.getEmployeeID()).isEqualTo(id);
         assertThat(employeeDTO.getFirstName()).isEqualTo("harshu");
         assertThat(employeeDTO.getLastName()).isEqualTo("bala");
+
+        verify(employeeRepository).findById(id); //used to verify whether findByID method is called in employeeRepository or not
     }
 }
