@@ -4,6 +4,7 @@ import com.TestingApplication.TestingApp.TestContainerConfiguration;
 import com.TestingApplication.TestingApp.dto.EmployeeDTO;
 import com.TestingApplication.TestingApp.entity.EmployeeEntity;
 import com.TestingApplication.TestingApp.repository.EmployeeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +22,9 @@ import org.springframework.context.annotation.Import;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,20 +47,29 @@ class EmployeeServiceTest {
     @InjectMocks
     private EmployeeService employeeService;
 
-    @Test
-    void testGetEmployeeById_WhenEmployeeIdIsPresent_ThenReturnEmployeeDto(){
-        //assign
-        Long id = 1L;
-        EmployeeEntity employee = EmployeeEntity.builder()
-                .employeeID(id)
+    private EmployeeDTO mockEmployeeDTO;
+    private EmployeeEntity mockEmployeeEntity;
+
+    @BeforeEach
+    void setUp(){
+        mockEmployeeEntity = EmployeeEntity.builder()
+                .employeeID(1L)
                 .firstName("harshu")
                 .lastName("bala")
                 .email("harshitha@gmail.com")
                 .salary(200D)
                 .age(18)
                 .build();
+
+        mockEmployeeDTO = modelMapper.map(mockEmployeeEntity, EmployeeDTO.class);
+    }
+
+    @Test
+    void testGetEmployeeById_WhenEmployeeIdIsPresent_ThenReturnEmployeeDto(){
+        //assign
+        Long id = 1L;
         when(employeeRepository.existsById(id)).thenReturn(true);
-        when(employeeRepository.findById(id)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(mockEmployeeEntity));
         //act
         EmployeeDTO employeeDTO = employeeService.getEmployeeByID(id);
         //assert
@@ -67,4 +79,19 @@ class EmployeeServiceTest {
 
         verify(employeeRepository).findById(id); //used to verify whether findByID method is called in employeeRepository or not
     }
+
+    @Test
+    void testCreateNewEmployee_whenValidEmployee_thenReturnEmployee(){
+        //assign
+        when(employeeRepository.save(any(EmployeeEntity.class))).thenReturn(mockEmployeeEntity);
+
+        //act
+        EmployeeDTO stubbedDTO = employeeService.postEmployee(mockEmployeeDTO);
+
+        //assert
+        assertThat(mockEmployeeDTO).isNotNull();
+        assertThat(stubbedDTO.getEmployeeID()).isEqualTo(mockEmployeeEntity.getEmployeeID());
+        assertThat(stubbedDTO.getEmail()).isEqualTo(mockEmployeeEntity.getEmail());
+    }
 }
+
