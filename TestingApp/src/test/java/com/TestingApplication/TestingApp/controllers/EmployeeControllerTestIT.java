@@ -86,4 +86,30 @@ class EmployeeControllerTestIT {
                 .jsonPath("$.firstName").isEqualTo(testEmployeeDTO.getFirstName());
     }
 
+    @Test
+    void testUpdateEmployee_whenEmployeeNotPresent_thenThrowException(){
+        webTestClient.put()
+                .uri("/employees/999")
+                .bodyValue(testEmployeeDTO)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testUpdateEmployee_whenEmployeePresent_thenUpdateEmployee(){
+        EmployeeEntity toBeUpdatedEmployee = employeeRepository.save(testEmployee);
+        testEmployeeDTO.setFirstName("Random");
+        testEmployeeDTO.setLastName("Random LastName");
+
+        webTestClient.put()
+                .uri("/employees/1")
+                .bodyValue(testEmployeeDTO)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                //.isEqualTo(testEmployeeDTO);
+                .jsonPath("$.firstName").isEqualTo(testEmployeeDTO.getFirstName())
+                .jsonPath("$.lastName").isEqualTo(testEmployeeDTO.getLastName());
+
+    }
 }
