@@ -34,6 +34,7 @@ class EmployeeRepositoryTest {
     @BeforeEach
     void setUp(){
         employee = EmployeeEntity.builder()
+                .employeeID(1L)
                 .firstName("harshu")
                 .lastName("bala")
                 .email("har@gmail.com")
