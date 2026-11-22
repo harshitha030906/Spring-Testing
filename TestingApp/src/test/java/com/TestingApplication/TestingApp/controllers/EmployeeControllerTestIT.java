@@ -16,39 +16,14 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@AutoConfigureWebTestClient(timeout = "100000")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TestContainerConfiguration.class)
-class EmployeeControllerTestIT {
 
-    @Autowired
-    private WebTestClient webTestClient;
+class EmployeeControllerTestIT extends AbstractIntegrationTest{
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    private EmployeeEntity testEmployee;
-    private EmployeeDTO testEmployeeDTO;
-
     @BeforeEach
     void setUp(){
-        testEmployee = EmployeeEntity.builder()
-                .employeeID(1L)
-                .firstName("harshu")
-                .lastName("bala")
-                .email("har@gmail.com")
-                .salary(10000D)
-                .age(20)
-                .build();
-
-        testEmployeeDTO = EmployeeDTO.builder()
-                .employeeID(1L)
-                .firstName("harshu")
-                .lastName("bala")
-                .email("har@gmail.com")
-                .salary(10000D)
-                .age(20)
-                .build();
         employeeRepository.deleteAll();
     }
 
@@ -130,5 +105,10 @@ class EmployeeControllerTestIT {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Boolean.class);
+
+        webTestClient.delete()
+                .uri("/employees/{id}", deleteEmployee.getEmployeeID())
+                .exchange()
+                .expectStatus().isNotFound();
     }
 }
