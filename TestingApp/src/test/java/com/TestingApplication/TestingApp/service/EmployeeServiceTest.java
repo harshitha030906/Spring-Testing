@@ -3,6 +3,7 @@ package com.TestingApplication.TestingApp.service;
 import com.TestingApplication.TestingApp.TestContainerConfiguration;
 import com.TestingApplication.TestingApp.dto.EmployeeDTO;
 import com.TestingApplication.TestingApp.entity.EmployeeEntity;
+import com.TestingApplication.TestingApp.exceptions.ResourceNotFoundException;
 import com.TestingApplication.TestingApp.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,14 +21,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 //@DataJpaTest
@@ -82,6 +84,20 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void testGetEmployeeByID_whenEmployeeIdIsNotPresent_ThenReturnEmptyOptional(){
+        Long id = 2L;
+        when(employeeRepository.existsById(id)).thenReturn(false);
+
+        //act and assert
+        assertThatThrownBy(() -> employeeService.getEmployeeByID(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("employee not found");
+
+        verify(employeeRepository).existsById(id);
+        verify(employeeRepository,never()).findById(id);
+    }
+
+    @Test
     void testCreateNewEmployee_whenValidEmployee_thenReturnEmployee(){
         //assign
         when(employeeRepository.save(any(EmployeeEntity.class))).thenReturn(mockEmployeeEntity);
@@ -102,5 +118,18 @@ class EmployeeServiceTest {
 
         assertThat(capturedEmployee.getFirstName()).isEqualTo(mockEmployeeEntity.getFirstName());
     }
+
+    @Test
+    void testGetAllEmployees_whenEmployeesPresent_ThenReturnAllEmployees(){
+        when(employeeRepository.findAll()).thenReturn(List.of(mockEmployeeEntity));
+
+        //act and assert
+        List<EmployeeDTO> employeeDTOS = employeeService.getAllEmployees();
+
+        assertThat(employeeDTOS).hasSize(1);
+
+        verify(employeeRepository).findAll();
+    }
+
 }
 
