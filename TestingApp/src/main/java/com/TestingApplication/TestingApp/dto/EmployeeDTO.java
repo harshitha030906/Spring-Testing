@@ -9,6 +9,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EmployeeDTO {
     private Long employeeID;
 
