@@ -49,6 +49,7 @@ class EmployeeControllerTestIT {
                 .salary(10000D)
                 .age(20)
                 .build();
+        employeeRepository.deleteAll();
     }
 
     @Test
@@ -71,6 +72,18 @@ class EmployeeControllerTestIT {
                 .uri("/employees/1")
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testCreateEmployee_whenEmployeeNotPresent_thenCreateEmployee(){
+        webTestClient.post()
+                .uri("/employees")
+                .bodyValue(testEmployeeDTO)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.email").isEqualTo(testEmployeeDTO.getEmail())
+                .jsonPath("$.firstName").isEqualTo(testEmployeeDTO.getFirstName());
     }
 
 }
