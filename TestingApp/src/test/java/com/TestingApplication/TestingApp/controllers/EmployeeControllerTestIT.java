@@ -112,4 +112,23 @@ class EmployeeControllerTestIT {
                 .jsonPath("$.lastName").isEqualTo(testEmployeeDTO.getLastName());
 
     }
+
+    @Test
+    void testDeleteEmployee_whenEmployeeNotPresent_thenthrowException(){
+        webTestClient.delete()
+                .uri("/employees/999")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testDeleteEmployee_whenEmployeePresent_thenDeleteEmployee(){
+        EmployeeEntity deleteEmployee = employeeRepository.save(testEmployee);
+
+        webTestClient.delete()
+                .uri("/employees/{id}", deleteEmployee.getEmployeeID())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Boolean.class);
+    }
 }
