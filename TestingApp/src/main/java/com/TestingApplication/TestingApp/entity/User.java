@@ -1,6 +1,10 @@
 package com.TestingApplication.TestingApp.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -11,6 +15,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
